@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from cmath import rect, pi
 
-from cars.utils import CarState, get_line_coefs, to_line_equation, define_sector, Action, rotate
+from gym_grand_prix.envs.cars.utils import CarState, get_line_coefs, to_line_equation, define_sector, Action, rotate
 
 
 def to_polar(point):

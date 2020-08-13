@@ -19,7 +19,7 @@ args = parser.parse_args()
 print(args.steps, args.seed, args.filename, args.evaluate, args.window)
 
 steps = args.steps
-seed = args.seed if args.seed else 23
+seed = args.seed if args.seed else 3
 window = args.window if args.window else False
 np.random.seed(seed)
 random.seed(seed)

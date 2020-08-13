@@ -4,8 +4,8 @@ from collections import deque
 
 import numpy as np
 
-from cars.utils import Action
-from learning_algorithms.network import Network
+from gym_grand_prix.envs.cars.utils import Action
+from gym_grand_prix.envs.learning_algorithms.network import Network
 
 
 class Agent(metaclass=ABCMeta):

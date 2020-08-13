@@ -7,9 +7,9 @@ from time import sleep
 import numpy as np
 import pygame
 
-from cars.agent import SimpleCarAgent
-from cars.track import plot_map
-from cars.utils import CarState, to_px, rotate, intersect_ray_with_segment, draw_text, angle
+from gym_grand_prix.envs.cars.agent import SimpleCarAgent
+from gym_grand_prix.envs.cars.track import plot_map
+from gym_grand_prix.envs.cars.utils import CarState, to_px, rotate, intersect_ray_with_segment, draw_text, angle
 
 black = (0, 0, 0)
 white = (255, 255, 255)
