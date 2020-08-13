@@ -1,16 +1,15 @@
 from cmath import rect, phase
 from math import ceil
-
+import pygame
 import numpy as np
 from numpy import pi
+from gym_grand_prix.envs.cars.utils import to_px
 
 sectors = 48
 radius = 5
 width = 3
 scale = radius / 5
 
-
-# np.random.seed(5)
 
 def get_partition(n, a, b=None):
     if b is None:
@@ -41,9 +40,7 @@ def plot_map(m, screen, scale=None, color=(0, 0, 0), width=2):
         xmax, ymax = np.array([(abs(outer.real), abs(outer.imag)) for inner, outer in m]).max(axis=0)
         scale = ceil(xmax) + ceil(ymax) * 1j
     size = screen.get_width(), screen.get_height()
-    from cars.utils import to_px
     points = np.array([[to_px(inner, scale, size), to_px(outer, scale, size)] for inner, outer in m])
-    import pygame
     pygame.draw.polygon(screen, color, points[:, 0], width)
     pygame.draw.polygon(screen, color, points[:, 1], width)
 

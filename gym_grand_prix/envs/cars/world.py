@@ -8,6 +8,7 @@ import numpy as np
 import pygame
 
 from gym_grand_prix.envs.cars.agent import SimpleCarAgent
+from gym_grand_prix.envs.cars.utils import Action
 from gym_grand_prix.envs.cars.track import plot_map
 from gym_grand_prix.envs.cars.utils import CarState, to_px, rotate, intersect_ray_with_segment, draw_text, angle
 
@@ -105,6 +106,16 @@ class SimpleCarWorld(World):
             self.circles[a] += angle(self.agent_states[a].position, next_agent_state.position) / (2*pi)
             self.agent_states[a] = next_agent_state
             a.receive_feedback(self.reward(next_agent_state, collision, vision))
+
+    def step(self, steering, acceleration):
+        action = Action(steering, acceleration)
+        for a in self.agents:
+            next_agent_state, collision = self.physics.move(self.agent_states[a], action)
+            self.circles[a] += angle(self.agent_states[a].position, next_agent_state.position) / (2 * pi)
+            self.agent_states[a] = next_agent_state
+            vision = self.vision_for(a)
+            reward = self.reward(next_agent_state, collision, vision)
+            return next_agent_state, reward, False, {}
 
     def reward(self, state, collision, sensor_info):
         """
@@ -321,26 +332,3 @@ class SimpleCarWorld(World):
         display.blit(self._info_surface, (0, 0), None, pygame.BLEND_RGB_SUB)
         self._info_surface.fill(black)  # clear notifications from previous round
         pygame.display.update()
-
-
-if __name__ == "__main__":
-    from HW_3.cars.physics import SimplePhysics
-    from HW_3.cars.track import generate_map
-
-    np.random.seed(3)
-    random.seed(3)
-    m = generate_map(8, 5, 3, 3)
-    SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, timedelta=0.2).run()
-
-    # если вы хотите продолжить обучение уже существующей модели, вместо того,
-    # чтобы создавать новый мир с новыми агентами, используйте код ниже:
-    # # он загружает агента из файла
-    # agent = SimpleCarAgent.from_file('filename.txt')
-    # # создаёт мир
-    # w = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, timedelta=0.2)
-    # # подключает к нему агента
-    # w.set_agents([agent])
-    # # и запускается
-    # w.run()
-    # # или оценивает агента в этом мире
-    # print(w.evaluate_agent(agent, 500))
