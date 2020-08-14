@@ -35,14 +35,6 @@ class SimpleCarWorld(World):
     SPEEDING_PENALTY = 0 * 1e-1
     MIN_SPEED = 0.1 * 1e0
     MAX_SPEED = 10 * 1e0
-    # Подружиться с педалью газа (и тормоза)
-    #     COLLISION_PENALTY = 0 * 1e0
-    #     HEADING_REWARD = 0 * 1e-1
-    #     WRONG_HEADING_PENALTY = 0 * 1e0
-    #     IDLENESS_PENALTY = 32 * 1e-1
-    #     SPEEDING_PENALTY = 32 * 1e-1
-    #     MIN_SPEED = 0.1 * 1e0
-    #     MAX_SPEED = 0.7 * 1e0
 
     size = (800, 600)
 
@@ -59,6 +51,7 @@ class SimpleCarWorld(World):
         self.physics = Physics(car_map, **physics_pars)
         self.map = car_map
         self.visual = window
+        self.done = False
 
         # создаём агентов
         self.set_agents(num_agents, agent_class)
@@ -108,35 +101,32 @@ class SimpleCarWorld(World):
             a.receive_feedback(self.reward(next_agent_state, collision, vision))
 
     def step(self, steering, acceleration):
+        print(steering, acceleration)
         action = Action(steering, acceleration)
         for a in self.agents:
             next_agent_state, collision = self.physics.move(self.agent_states[a], action)
-            self.circles[a] += angle(self.agent_states[a].position, next_agent_state.position) / (2 * pi)
+            progress = angle(self.agent_states[a].position, next_agent_state.position) / (2 * pi)
+            self.circles[a] += progress
             self.agent_states[a] = next_agent_state
             vision = self.vision_for(a)
-            reward = self.reward(next_agent_state, collision, vision)
-            return next_agent_state, reward, False, {}
+            reward = self.reward(collision, progress)
+            a.sensor_data_history.append(vision)
+            a.chosen_actions_history.append(action)
+            a.reward_history.append(reward)
+            a.step += 1
+            q = .001 if a.step > 1000 else 1. / float(a.step)
+            a.avg_reward = (1. - q) * a.avg_reward + q * reward
+            a.sum_reward += reward
+            return vision, reward, self.done, {}
 
-    def reward(self, state, collision, sensor_info):
+    def reward(self, collision, progress):
         """
-        Вычисление награды агента, находящегося в состоянии state.
-        Эту функцию можно (и иногда нужно!) менять, чтобы обучить вашу сеть именно тем вещам, которые вы от неё хотите
-        :param sensor_info:
-        :param state: текущее состояние агента
+        Вычисляем награду агента за его действие
+        :param progress: приращение числа пройденных кругов
         :param collision: произошло ли столкновение со стеной на прошлом шаге
-        :return reward: награду агента (возможно, отрицательную)
+        :return reward: награда агента
         """
-        V = sensor_info[0]
-        sin = -sensor_info[1]
-        heading_reward = V*sin
-        ladar = np.array(sensor_info[2:])
-        l = len(ladar)
-        n = int((l - 1) / 2)  # индекс в массиве ladar для направления вперед
-        s = ladar[n]  # расстояние до стенки прямо по курсу
-        speeding_penalty = abs(V*V - 0.45*s)
-        collision_penalty = int(collision) * self.COLLISION_PENALTY
-        reward = heading_reward * self.HEADING_REWARD - collision_penalty - speeding_penalty
-        # print("reward=%.3f" % reward)
+        reward = progress * 1000. - 1. - 10. * int(collision)
         return reward
 
     def eval_reward(self, state, collision):
@@ -264,18 +254,19 @@ class SimpleCarWorld(World):
 
         if len(self.agents) == 1:
             a = self.agents[0]
-            draw_text("Reward: %.3f" % a.reward_history[-1], self._info_surface, scale, self.size,
-                      text_color=white, bg_color=black)
-            draw_text("Step: %d Avg reward: %.3f" % (a.step, a.avg_reward), self._info_surface, scale, self.size,
-                      text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 790, 10))
-            steer, acc = a.chosen_actions_history[-1]
-            state = self.agent_states[a]
-            draw_text("Action: steer.: %.2f, accel: %.2f" % (steer, acc), self._info_surface, scale,
-                      self.size, text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 500, 10))
-            draw_text("Inputs: |v|=%.2f, sin(angle): %.2f, circle: %.2f" % (
-                abs(state.velocity), np.sin(angle(-state.position, state.heading)), self.circles[a]),
-                      self._info_surface, scale,
-                      self.size, text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 500, 50))
+            if a.step > 0:
+                draw_text("Reward: %.3f" % a.reward_history[-1], self._info_surface, scale, self.size,
+                          text_color=white, bg_color=black)
+                draw_text("Step: %d Avg reward: %.3f" % (a.step, a.avg_reward), self._info_surface, scale, self.size,
+                          text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 790, 10))
+                steer, acc = a.chosen_actions_history[-1]
+                state = self.agent_states[a]
+                draw_text("Action: steer.: %.2f, accel: %.2f" % (steer, acc), self._info_surface, scale,
+                          self.size, text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 500, 10))
+                draw_text("Inputs: |v|=%.2f, sin(angle): %.2f, circle: %.2f" % (
+                    abs(state.velocity), np.sin(angle(-state.position, state.heading)), self.circles[a]),
+                          self._info_surface, scale,
+                          self.size, text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 500, 50))
 
     def _get_agent_image(self, original, state, scale):
         angle = phase(state.heading) * 180 / pi

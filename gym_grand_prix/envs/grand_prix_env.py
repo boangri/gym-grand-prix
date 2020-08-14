@@ -1,5 +1,7 @@
 import gym
 import numpy as np
+import pygame
+
 from cmath import rect, pi, phase
 
 from gym import error, spaces, utils
@@ -15,16 +17,15 @@ class GrandPrixEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
-        print("creating world...")
         self.nrays = 5
         self.action_space = spaces.Box(np.array([-1., 0, 1.]),
                                        np.array([-.75, 0, .75]),
                                        dtype=np.float64)  # steer, gas/brake
 
         self.observation_space = spaces.Box(low=-1., high=20., shape=(2 + self.nrays,), dtype=np.float32)
+        self.seed()
         m = generate_map(8, 5, 3, 3)
         self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=True, timedelta=0.2)
-        self.seed()
         self.reset()
         if self.world.visual:
             self.scale = self.world._prepare_visualization()
@@ -38,17 +39,13 @@ class GrandPrixEnv(gym.Env):
         return self.world.step(action[0], action[1])
 
     def reset(self):
-        print("reset env")
-        pos = (self.world.map[0][0] + self.world.map[0][1]) / 2
-        vel = 0
-        heading = rect(-0.3, 1)
-        print(pos, heading)
-        pass
+        self.world.set_agents(agent_class=SimpleCarAgent)
 
     def render(self, mode='human', close=False):
-        print("render the picture")
-        pass
+        if self.world.visual:
+            self.world.visualize(self.scale)
+            if self.world._update_display() == pygame.QUIT:
+                self.world.done = True
 
     def close(self):
-        print("closing the window")
         pass

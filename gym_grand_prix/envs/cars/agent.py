@@ -40,6 +40,7 @@ class SimpleCarAgent(Agent):
         self.sensor_data_history = deque([], maxlen=history_data)
         self.chosen_actions_history = deque([], maxlen=history_data)
         self.reward_history = deque([], maxlen=history_data)
+        # self.reward_history.append(0.)  # workaround
         self.step = 0
         self.avg_reward = 0.    # средняя награда за последнюю тысячу шагов
         self.sum_reward = 0.    # сумма всех наград
