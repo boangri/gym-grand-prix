@@ -36,7 +36,7 @@ class SimpleCarWorld(World):
     MIN_SPEED = 0.1 * 1e0
     MAX_SPEED = 10 * 1e0
 
-    size = (800, 600)
+    size = (800, 400)
 
     def __init__(self, num_agents, car_map, Physics, agent_class, window=True, **physics_pars):
         """

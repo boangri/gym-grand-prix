@@ -30,7 +30,7 @@ class GrandPrixEnv(gym.Env):
         random.seed(seed)
         m = generate_map(8, 5, 3, 3)
         self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=True, timedelta=0.2)
-        self.reset()
+        self.world.set_agents(agent_class=SimpleCarAgent)
         if self.world.visual:
             self.scale = self.world._prepare_visualization()
         # self.world.run(steps=2)
@@ -43,7 +43,10 @@ class GrandPrixEnv(gym.Env):
         return self.world.step(action[0], action[1])
 
     def reset(self):
-        self.world.set_agents(agent_class=SimpleCarAgent)
+        # self.world.set_agents([SimpleCarAgent()])
+        a = self.world.agents[0]
+        vision = self.world.vision_for(a)
+        return np.array(vision)
 
     def render(self, mode='human', close=False):
         if self.world.visual:
