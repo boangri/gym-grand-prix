@@ -101,7 +101,6 @@ class SimpleCarWorld(World):
             a.receive_feedback(self.reward(next_agent_state, collision, vision))
 
     def step(self, steering, acceleration):
-        print(steering, acceleration)
         action = Action(steering, acceleration)
         for a in self.agents:
             next_agent_state, collision = self.physics.move(self.agent_states[a], action)

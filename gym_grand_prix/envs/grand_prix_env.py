@@ -1,6 +1,7 @@
 import gym
 import numpy as np
 import pygame
+import random
 
 from cmath import rect, pi, phase
 
@@ -18,12 +19,15 @@ class GrandPrixEnv(gym.Env):
 
     def __init__(self):
         self.nrays = 5
-        self.action_space = spaces.Box(np.array([-1., 0, 1.]),
-                                       np.array([-.75, 0, .75]),
-                                       dtype=np.float64)  # steer, gas/brake
-
-        self.observation_space = spaces.Box(low=-1., high=20., shape=(2 + self.nrays,), dtype=np.float32)
-        self.seed()
+        self.action_space = spaces.Box(low=np.array([-1., -.75]),
+                                       high=np.array([1., .75]),
+                                       dtype=np.float32)  # steer, gas, brake
+        self.observation_space = spaces.Box(low=np.array([0., -1., 0., 0., 0., 0., 0.]),
+                                            high=np.array([100., 1., 20., 20., 20., 20., 20.]), dtype=np.float32)
+        # self.seed()
+        seed = 3
+        np.random.seed(seed)
+        random.seed(seed)
         m = generate_map(8, 5, 3, 3)
         self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=True, timedelta=0.2)
         self.reset()
