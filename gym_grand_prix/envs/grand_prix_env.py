@@ -23,7 +23,7 @@ class GrandPrixEnv(gym.Env):
                                        high=np.array([1., .75]),
                                        dtype=np.float32)  # steer, gas, brake
         self.observation_space = spaces.Box(low=np.array([0., -1., 0., 0., 0., 0., 0.]),
-                                            high=np.array([100., 1., 20., 20., 20., 20., 20.]), dtype=np.float32)
+                                            high=np.array([100., 1., 20., 20., 20., 20., 20.]), dtype=np.float64)
         # self.seed()
         seed = 3
         np.random.seed(seed)
