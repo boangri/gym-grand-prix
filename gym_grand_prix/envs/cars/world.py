@@ -52,6 +52,8 @@ class SimpleCarWorld(World):
         self.map = car_map
         self.visual = window
         self.done = False
+        self.nrays = 5
+        self.steps = 0
 
         # создаём агентов
         self.set_agents(num_agents, agent_class)
@@ -70,7 +72,7 @@ class SimpleCarWorld(World):
         heading = rect(-0.3, 1)
 
         if type(agents) is int:
-            self.agents = [agent_class() for _ in range(agents)]
+            self.agents = [agent_class(nrays=self.nrays) for _ in range(agents)]
         elif type(agents) is list:
             self.agents = agents
         else:
@@ -116,7 +118,7 @@ class SimpleCarWorld(World):
             q = .001 if a.step > 1000 else 1. / float(a.step)
             a.avg_reward = (1. - q) * a.avg_reward + q * reward
             a.sum_reward += reward
-            return vision, reward, self.done, {}
+            return vision, reward, a.step == self.steps, {}
 
     def reward(self, collision, progress):
         """
