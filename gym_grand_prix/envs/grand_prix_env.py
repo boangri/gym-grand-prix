@@ -21,7 +21,7 @@ class GrandPrixEnv(gym.Env):
         self.nrays = 5
         self.seed = 3
         self.steps = 0  # means infinity
-        self.nodisplay = False
+        self.display = False
         self.action_space = spaces.Box(low=np.array([-1., -.75]),
                                        high=np.array([1., .75]),
                                        dtype=np.float32)  # steer, gas, brake
@@ -38,16 +38,16 @@ class GrandPrixEnv(gym.Env):
             self.seed = options['seed']
         if 'steps' in options:
             self.steps = options['steps']
-        if 'nodisplay' in options:
-            self.nodisplay = True
+        if 'display' in options:
+            self.display = True
         np.random.seed(self.seed)
         random.seed(self.seed)
         m = generate_map(8, 5, 3, 3)
-        self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=False, timedelta=0.2)
+        self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=self.display, timedelta=0.2)
         self.world.nrays = self.nrays
         self.world.steps = self.steps
         self.world.set_agents(agent_class=SimpleCarAgent)
-        if not self.nodisplay:
+        if self.display:
             self.world.visual = True
             self.scale = self.world._prepare_visualization()
         else:
