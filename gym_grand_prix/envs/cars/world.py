@@ -313,6 +313,7 @@ class SimpleCarWorld(World):
     def _update_display(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.display.quit()
                 return pygame.QUIT
         display = pygame.display.get_surface()
         display.fill(white)
@@ -324,3 +325,6 @@ class SimpleCarWorld(World):
         display.blit(self._info_surface, (0, 0), None, pygame.BLEND_RGB_SUB)
         self._info_surface.fill(black)  # clear notifications from previous round
         pygame.display.update()
+
+    def quit(self):
+        pygame.display.quit()

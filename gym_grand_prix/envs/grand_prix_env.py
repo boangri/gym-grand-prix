@@ -69,4 +69,5 @@ class GrandPrixEnv(gym.Env):
                 self.world.done = True
 
     def close(self):
-        pass
+        # print("closing display window")
+        self.world.quit()
