@@ -43,13 +43,15 @@ class GrandPrixEnv(gym.Env):
         np.random.seed(self.seed)
         random.seed(self.seed)
         m = generate_map(8, 5, 3, 3)
-        self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=True, timedelta=0.2)
+        self.world = SimpleCarWorld(1, m, SimplePhysics, SimpleCarAgent, window=False, timedelta=0.2)
         self.world.nrays = self.nrays
         self.world.steps = self.steps
         self.world.set_agents(agent_class=SimpleCarAgent)
         if not self.nodisplay:
             self.world.visual = True
             self.scale = self.world._prepare_visualization()
+        else:
+            self.world.visual = False
 
     def step(self, action):
         return self.world.step(action[0], action[1])
