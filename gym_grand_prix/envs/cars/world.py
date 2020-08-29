@@ -118,7 +118,7 @@ class SimpleCarWorld(World):
             q = .001 if a.step > 1000 else 1. / float(a.step)
             a.avg_reward = (1. - q) * a.avg_reward + q * reward
             a.sum_reward += reward
-            return vision, reward, a.step == self.steps, {}
+            return np.array(vision), reward, a.step == self.steps, {}
 
     def reward(self, collision, progress):
         """
