@@ -127,7 +127,7 @@ class SimpleCarWorld(World):
         :param collision: произошло ли столкновение со стеной на прошлом шаге
         :return reward: награда агента
         """
-        reward = progress * 1000. - 1. - 10. * int(collision)
+        reward = progress * 1000. - 1. - 40. * int(collision)
         return reward
 
     def eval_reward(self, state, collision):
