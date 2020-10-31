@@ -118,7 +118,7 @@ class SimpleCarWorld(World):
             q = .001 if a.step > 1000 else 1. / float(a.step)
             a.avg_reward = (1. - q) * a.avg_reward + q * reward
             a.sum_reward += reward
-            return np.array(vision), reward, a.step == self.steps, {}
+            return np.array(vision), reward, a.step == self.steps, {'collision': collision}
 
     def reward(self, collision, progress):
         """
@@ -127,7 +127,7 @@ class SimpleCarWorld(World):
         :param collision: произошло ли столкновение со стеной на прошлом шаге
         :return reward: награда агента
         """
-        reward = progress * 1000. - 1. - 40. * int(collision)
+        reward = progress * 1000. - 1. #- 40. * int(collision)
         return reward
 
     def eval_reward(self, state, collision):
