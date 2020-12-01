@@ -268,6 +268,7 @@ class SimpleCarWorld(World):
                     abs(state.velocity), np.sin(angle(-state.position, state.heading)), self.circles[a]),
                           self._info_surface, scale,
                           self.size, text_color=white, bg_color=black, tlpoint=(self._info_surface.get_width() - 500, 50))
+            return pygame.surfarray.array3d(self._agent_surfaces[0])
 
     def _get_agent_image(self, original, state, scale):
         angle = phase(state.heading) * 180 / pi
