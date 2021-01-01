@@ -17,7 +17,7 @@ from gym_grand_prix.envs.cars.physics import SimplePhysics
 class GrandPrixEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': 5
+        'video.frames_per_second': 10
     }
 
     def __init__(self):
