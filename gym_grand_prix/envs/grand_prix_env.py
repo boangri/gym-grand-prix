@@ -70,7 +70,7 @@ class GrandPrixEnv(gym.Env):
 #             a = self.world.visualize(self.scale)
             if self.world._update_display() == pygame.QUIT:
                 self.world.done = True
-            a = pygame.surfarray.array3d(self.world._map_surface)
+            a = pygame.surfarray.array3d(self.world._agent_surfaces[0])
             return np.transpose(a, (1, 0, 2))
 
     def close(self):
