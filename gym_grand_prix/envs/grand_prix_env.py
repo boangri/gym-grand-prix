@@ -17,7 +17,7 @@ from gym_grand_prix.envs.cars.physics import SimplePhysics
 class GrandPrixEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second': 5
+        'video.frames_per_second': 10
     }
 
     def __init__(self):
@@ -32,7 +32,6 @@ class GrandPrixEnv(gym.Env):
                                             high=np.array([100., 1., 20., 20., 20., 20., 20.]), dtype=np.float64)
         self.world = None
         self.scale = None
-        self.setOptions({})
 
     def setOptions(self, options):
         if 'nrays' in options:
@@ -59,7 +58,8 @@ class GrandPrixEnv(gym.Env):
     def step(self, action):
         return self.world.step(action[0], action[1])
 
-    def reset(self):
+    def reset(self, options={}):
+        self.setOptions(options);
         # self.world.set_agents([SimpleCarAgent()])
         a = self.world.agents[0]
         vision = self.world.vision_for(a)
