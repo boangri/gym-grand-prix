@@ -15,7 +15,10 @@ from gym_grand_prix.envs.cars.physics import SimplePhysics
 
 
 class GrandPrixEnv(gym.Env):
-    metadata = {'render.modes': ['human']}
+    metadata = {
+        'render.modes': ['human', 'rgb_array'],
+        'video.frames_per_second': 5
+    }
 
     def __init__(self):
         self.nrays = 5
@@ -64,10 +67,12 @@ class GrandPrixEnv(gym.Env):
 
     def render(self, mode='human', close=False):
         if self.world.visual:
-            self.world.visualize(self.scale)
+            a = self.world.visualize(self.scale)
             if self.world._update_display() == pygame.QUIT:
                 self.world.done = True
+            return np.transpose(a, (1, 0, 2))
 
     def close(self):
         # print("closing display window")
         self.world.quit()
+        pygame.quit()
