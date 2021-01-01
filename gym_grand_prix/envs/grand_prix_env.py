@@ -67,7 +67,7 @@ class GrandPrixEnv(gym.Env):
 
     def render(self, mode='human', close=False):
         if self.world.visual:
-#             a = self.world.visualize(self.scale)
+            self.world.visualize(self.scale)
             if self.world._update_display() == pygame.QUIT:
                 self.world.done = True
             a = pygame.surfarray.array3d(self.world._agent_surfaces[0])

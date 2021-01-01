@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(name='gym-grand-prix',
-      version='0.1.4',
+      version='0.1.5',
       description='Gym GrandPrix Env',
       url='https://github.com/boangri/gym-grand-prix',
       author='Boris Gribovskiy',
