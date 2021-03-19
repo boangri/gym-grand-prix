@@ -59,7 +59,9 @@ class GrandPrixEnv(gym.Env):
     def step(self, action):
         return self.world.step(action[0], action[1])
 
-    def reset(self):
+    def reset(self, options=None):
+        if options is not None:
+            self.setOptions(options)
         # self.world.set_agents([SimpleCarAgent()])
         a = self.world.agents[0]
         vision = self.world.vision_for(a)
