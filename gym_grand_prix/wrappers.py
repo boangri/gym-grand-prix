@@ -10,7 +10,7 @@ class GrandPrixWrapper(gym.RewardWrapper):
         self.possible_actions = ((0, 0), (1, .75), (-1, .75), (0, .75), (0, -.75))
         self.steps = 0
         self.env = env
-        self.action_space = spaces.Discrete(len(self.possible_actions))
+        self.env.action_space = spaces.Discrete(len(self.possible_actions))
         super().__init__(env)
 
     def step(self, action):
